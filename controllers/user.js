@@ -1,5 +1,5 @@
-const { User,Attendance ,Roster,Shift,Department} = require('../models');
-const { getUserById ,getDepartmentById,encryptPassword,comparePassword, getCurrentTimeInHHMMSS ,getRosterById} = require('../helpers');
+const { User } = require('../models');
+const { getUserById ,getDepartmentById,encryptPassword,comparePassword} = require('../helpers');
 const { createToken }  = require('../auth');
 
 const signUp = async (req, res) => {
@@ -109,86 +109,6 @@ const deleteUser = async (req, res) => {
 }
 };
 
-const createAttendance = async (req, res) => {
-  try {
-    const { userId, imagePath, status ,date} = req.body;
-    const currentTime = getCurrentTimeInHHMMSS();
-    const user = await getUserById(userId);
-		if(!user) throw new Error("User is not valid to update");
-    const attendance= await new Attendance({
-      userId:user._id,
-      imagePath:imagePath,
-      status:status,
-      date:date,
-      punchingTime:currentTime
-  }).save();
-    await Roster.findOneAndUpdate({userId:userId,date:date},{attendanceId:attendance._id}); // updates attendance in roster
-    res.status(200).json({ msg: "Attendance successfully created"});
-} catch(error)  {
-    console.log("error",error);
-    res.status(400).json({ msg: error.message });
-}
-};
-
-const createRoster=async(req, res) => {
-  try{
-    const { userId, shift, workingDay, date } = req.body;
-    const user = await getUserById(userId);
-		if(!user) throw new Error("User is not valid to create Roster");
-	    await new Roster({
-      userId:userId,
-      shiftId:shift,
-      workingDay:workingDay,
-      date:date
-  }).save();
-    res.status(200).json({ msg: "Roster created successfully"});
-  }catch(error)  {
-    console.log("error",error);
-    res.status(400).json({ msg: error.message });
-}
-};
-
-const editRoster=async(req, res) => {
-  try{
-    const { rosterId } = req.body;
-    console.log("hi");
-    const roster = await getRosterById(rosterId);
-    console.log(roster);
-		if(!roster) throw new Error("roster is not valid");
-    await Roster.findOneAndUpdate({_id:rosterId}, req.body);
-    res.status(200).json({ msg: "Roster edited successfully"});
-  }catch(error)  {
-    console.log("error",error);
-    res.status(400).json({ msg: error.message });
-}
-};
-
-const viewRoster=async(req, res) => {
-  try{
-    const { rosterId } = req.query;
-    const roster = await getRosterById(rosterId);
-		if(!roster) throw new Error("roster is not valid");
-    res.status(200).json({ roster: roster });
-  }catch(error)  {
-    console.log("error",error);
-    res.status(400).json({ msg: error.message });
-}
-};
-
-const viewAssignedShiftForStaff=async(req, res) => {
-  try{
-    const { userId } = req.query;
-    const user = await getUserById(userId);
-		if(!user) throw new Error("User is not valid");
-    const roster = await Roster.findOne({ userId: userId});
-		if(!roster) throw new Error("User doesn't have any assigned shift");
-    res.status(200).json({ assignedShiftDetails: roster });
-  }catch(error)  {
-    console.log("error",error);
-    res.status(400).json({ msg: error.message });
-}
-};
-
 const updateDepartment=async(req, res) => {
   try{
     const user = await getUserById(req.body.userId);
@@ -217,8 +137,6 @@ const getStaffForManager=async(req, res) => {
 }
 };
 
-
-
 module.exports =  { 
   signUp,
   login,
@@ -226,12 +144,7 @@ module.exports =  {
   createUser,
   deleteUser,
   getUser,
-  updateUser ,
-  createAttendance,
-  createRoster,
-  editRoster,
-  viewRoster,
-  viewAssignedShiftForStaff,
+  updateUser,
   updateDepartment,
   getStaffForManager,
 };
