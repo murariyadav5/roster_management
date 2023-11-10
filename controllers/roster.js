@@ -53,7 +53,7 @@ const createRoster=async(req, res) => {
       if(!user) throw new Error("User is not valid");
       let roster;
       if(req.body.date){
-        roster=await Roster.findOne({ userId: userId ,date:date});
+        roster=await Roster.findOne({ userId: userId ,date:req.body.date});
       }else{
         roster = await Roster.findOne({ userId: userId});
       }

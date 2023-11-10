@@ -1,0 +1,133 @@
+users can signUp with the signUp form where the user details are required (firstName, lastName, email, mobile, password)
+
+users(Admin, Manager, User) can login through the login portal, where each role can perform a different functionalities.
+
+Authentication & Authorization:
+Roles:
+The system supports three roles: Manager, Staff and Admin.
+Managers have the authority to create, edit, and view the roster.
+Staff members are only allowed to mark their attendance and view their respective roster information in the roster.
+
+Authentication:
+
+Managers need to authenticate themselves to access roster management features.
+Staff members need to authenticate to mark their attendance.
+
+
+// Roster Management:
+
+Adding Staff Members:
+only authorized Managers can add new staff members to the roster.
+When adding a staff member, managers should provide necessary details like userId, shiftId, date and day which staff need to work.
+(day is enum where Monday to Sunday are only allowed to give)
+
+Setting Working Days and Shifts:
+Managers have the capability to set working days and shifts for each staff member. (here we have 3 shifts morning , afternoon and night)
+Shifts could include start and end times for each day. (startTime and endTime are updated in shift model)
+
+Viewing the Complete Roster:
+Managers can view the complete roster to get an overview of the respective staff schedule.
+Roster details should include staffId(userId), working day, and shiftId.
+
+Editing Staff Details:
+
+Admin and Managers have the authority to edit the details of any staff member in the roster.
+This includes updating personal information, working days, and shifts.
+
+// Attendance Management:
+
+Viewing Assigned Shifts:
+Staff members can view their assigned shifts by using their Id and date in Roster Model.
+This information helps staff plan their work schedule.
+
+Marking Attendance:
+Staff members can mark their attendance by capturing an image using the webcam.(this can be implemented in the front end)
+The system will store the attendance data, timestamp, and the captured image (link).
+
+Additional Information:
+Image Storage:
+Captured images during attendance marking are securely stored in the system.
+Consider specifying the storage mechanism and location.
+(can be implemented in the future)
+
+
+API Endpoints:
+
+// user management
+users.signUp - used to sign up
+
+users.login - used to login using email and password
+
+users.updateRole - Admin can update the role using userId of respective staff member
+
+users.createUser - admin can create the user by giving firstName, lastName, email, mobile, password, role and department.
+
+users.getUser - Both admin and manager can get the user using userId of respective staff member.
+
+users.updateUser - both admin and manager can update the user using userId of respective staff member and (should provide details to update)
+
+users.deleteUser - admin can delete the user using userId of respective staff member (update a field as Active as false)
+
+users.updateDepartment - admin can update the user using userId of respective staff member
+
+users.getStaffForManager - fetches all staffMembers working under the manager by using departmentId of the manager in the user model.
+
+// attendance management
+
+attendance.createAttendance - Admin, manager and staff members can update their own Attendance daily.
+
+//roster management
+
+roster.createRoster - manager can create roster for the staff working under the manager. (should provide userId, shiftId, shiftDay, ShiftDate)
+
+roster.editRoster - manager can edit roster for the staff working under the manager (should provide rosterId and fields need to edit)
+
+roster.viewRoster - manager and staff can view roster.
+here roster can be fetched in different ways depending on the field we need to search
+1) userId
+2) rosterId
+3) shiftId
+4) shiftDay
+5) shiftDate
+
+roster.viewAssignedShiftForStaff - staff members can view their assigned shift for the current working day or staff can give filters like date too.
+
+Technology Stack:
+nodejs and express framework used to manage.
+mongodb used as database.
+
+Dependencies:
+bcrypt for password encryption and password decryption.
+
+This command installs the latest version of bcrypt and adds it to your project's dependencies : npm install bcrypt 
+Once the installation is complete, you can start using bcrypt in your Node.js application. Import it into your code using:   const bcrypt = require('bcrypt');
+
+jwt is used for authentication
+Use npm to install the jsonwebtoken library: npm install jsonwebtoken
+Here's a simple example of how you can use JWT for token : const jwt = require('jsonwebtoken');
+
+Testing:
+Used Thunder Client to test
+
+run the code using command -  yarn dev
+
+
+
+
+
+
+
+
+Additional Information:
+
+API that helps users to update their own details like firstName, lastName, email, mobile, password.
+
+API that helps to compare the captured image and stored image of the staff by using ML to ignore the proxy. 
+
+create a single roster and add staff members to the roster where all staffMembers are pushed into an array.
+
+write cron jobs for monthly report like attendance 
+
+API that helps managers and staff to update the status of assigned tasks.
+
+
